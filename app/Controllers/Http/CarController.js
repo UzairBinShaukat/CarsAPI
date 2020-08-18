@@ -1,6 +1,9 @@
 "use strict";
 
 const Car = use("App/Models/Car");
+const Notification = use("App/Models/Notification");
+const Event = use("Event");
+
 class CarController {
   async index({ response }) {
     const cars = await Car.all();
@@ -12,6 +15,10 @@ class CarController {
 
   async store({ request, response }) {
     const info = request.post();
+    const notification = await Notification.create({
+      title: "Testing from backend",
+      text: "testing for backend to add a new car",
+    });
 
     const car = new Car();
     car.modelName = info.modelName;
@@ -22,6 +29,7 @@ class CarController {
 
     try {
       await car.save();
+      Event.emit("notification::created", notification);
     } catch (e) {
       return response.json(e);
     }
