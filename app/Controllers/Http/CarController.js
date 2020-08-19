@@ -16,17 +16,9 @@ class CarController {
     const info = request.post();
 
     const notification = {
-      data: {
-        title: "Testing from backend",
-        text: "testing for backend to add a new car",
-      },
-      to: "1:20614456215:android:4a16e8f5d914d9327d1ad2",
-      priority: "high",
+      title: "New Cars Added",
+      text: "We've added new cars. Tap to checkout the latest models.",
     };
-    // const notification = await Notification.create({
-    //   title: "Testing from backend",
-    //   text: "testing for backend to add a new car",
-    // });
 
     const car = new Car();
     car.modelName = info.modelName;
@@ -57,6 +49,10 @@ class CarController {
 
   async update({ params, request, response }) {
     const car = await Car.find(params.id);
+    const notification = {
+      title: "Data Updated",
+      text: "Update list",
+    };
     const info = request.post();
     car.modelName = info.modelName;
     car.company = info.company;
@@ -66,6 +62,7 @@ class CarController {
 
     try {
       await car.save();
+      Event.emit("notification::created", notification);
     } catch (e) {
       return response.json(e);
     }
@@ -77,6 +74,10 @@ class CarController {
 
   async destroy({ params, response }) {
     const car = await Car.find(params.id);
+    const notification = {
+      title: "Deleted a car",
+      text: "to update the list",
+    };
     try {
       if (car) await car.delete();
       else
@@ -87,6 +88,7 @@ class CarController {
     } catch (e) {
       return response.json(e);
     }
+    Event.emit("notification::created", notification);
     return response.json({
       message: "Record deleted successfully",
       data: { deleted: true },
