@@ -1,7 +1,6 @@
 "use strict";
 
 const Car = use("App/Models/Car");
-const Notification = use("App/Models/Notification");
 const Event = use("Event");
 
 class CarController {
@@ -15,10 +14,19 @@ class CarController {
 
   async store({ request, response }) {
     const info = request.post();
-    const notification = await Notification.create({
-      title: "Testing from backend",
-      text: "testing for backend to add a new car",
-    });
+
+    const notification = {
+      data: {
+        title: "Testing from backend",
+        text: "testing for backend to add a new car",
+      },
+      to: "1:20614456215:android:4a16e8f5d914d9327d1ad2",
+      priority: "high",
+    };
+    // const notification = await Notification.create({
+    //   title: "Testing from backend",
+    //   text: "testing for backend to add a new car",
+    // });
 
     const car = new Car();
     car.modelName = info.modelName;

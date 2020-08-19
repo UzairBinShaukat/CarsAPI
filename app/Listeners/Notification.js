@@ -1,15 +1,28 @@
 "use strict";
 
-const FCM = use("FCM");
 const Notification = (exports = module.exports = {});
+var axios = use("axios");
 
 Notification.created = async (instance) => {
-  const { title, text } = instance.toJSON();
+  var data = JSON.stringify({
+    data: instance,
+    to: process.env.DEVICE_TOKEN,
+  });
+  var config = {
+    method: "post",
+    url: "https://fcm.googleapis.com/fcm/send",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "key=" + process.env.FCM_API_KEY,
+    },
+    data: data,
+  };
 
-  const recipients = { topic: "notifications" }; // or { registrationTokens: [...] }
-  const response = await FCM.send(
-    { notification: { title, body: text } },
-    recipients
-  );
-  console.log(response);
+  axios(config)
+    .then(function (response) {
+      if (response.data.success === 1) console.log("Notification Delivered");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 };
