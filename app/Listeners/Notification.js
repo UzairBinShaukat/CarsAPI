@@ -5,8 +5,15 @@ var axios = use("axios");
 
 Notification.created = async (instance) => {
   var data = JSON.stringify({
-    data: instance,
+    notification: instance,
+    android: {
+      notification: {
+        icon: "stock_ticker_update",
+        color: "#7e55c3",
+      },
+    },
     to: process.env.DEVICE_TOKEN,
+    priority: "high",
   });
   var config = {
     method: "post",
